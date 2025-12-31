@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Happy New Year Wishes</title>
+<style>
+body{
+  margin:0;
+  padding:0;
+  background:#000;
+  font-family:'Poppins',sans-serif;
+  text-align:center;
+  overflow-x:hidden;
+  position:relative;
+  height:100vh;
+}
+
+/* Flying objects container */
+.flyingContainer{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  overflow:hidden;
+  z-index:0;
+}
+
+.flyingObj{
+  position:absolute;
+  top:-50px; /* Start above */
+  font-size:20px;
+  opacity:0.8;
+  animation:floatDown linear infinite;
+}
+
+@keyframes floatDown{
+  0% {transform: translateY(0) rotate(0deg); opacity:0.8;}
+  50% {transform: translateY(300px) rotate(20deg); opacity:1;}
+  100% {transform: translateY(600px) rotate(-20deg); opacity:0;}
+}
+
+/* Banner */
+.banner{
+  margin-top:50px;
+  position:relative;
+  z-index:1;
+  opacity:0;
+  transition:opacity 1s;
+}
+
+.banner.show{
+  opacity:1;
+}
+
+.banner-title{
+  font-size:50px;
+  font-weight:800;
+  color:#ffe600;
+  animation:blink 2s infinite;
+}
+
+.banner-sub{
+  font-size:60px;
+  font-weight:900;
+  color:#fff;
+  animation:blinkWhite 1.5s infinite;
+}
+
+@keyframes blink{
+  0%,100%{opacity:1;}
+  50%{opacity:.5;}
+}
+@keyframes blinkWhite{
+  0%,100%{opacity:1;}
+  50%{opacity:.3;}
+}
+
+/* Circle layout */
+.row{
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  gap:40px;
+  margin-top:25px;
+  opacity:0;
+  transition:opacity 1s;
+}
+
+.row.show{
+  opacity:1;
+}
+
+/* Circle */
+.circle{
+  width:170px;
+  height:170px;
+  border-radius:50%;
+  border:3px solid #ffe600;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 0 18px #ffe600;
+}
+
+.circle::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  border:3px dashed #fff;
+  animation:spin 3s linear infinite;
+}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+.circle img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:50%;
+}
+
+#userMessage{
+  margin-top:20px;
+  font-size:36px;
+  font-weight:900;
+  color:#00ffea;
+  opacity:0;
+  transition:opacity 1s;
+}
+
+#userMessage.show{
+  opacity:1;
+}
+
+.creator{font-size:18px;opacity:.9}
+
+/* Name input box */
+#nameBox{
+  margin-top:100px;
+  z-index:1;
+  position:relative;
+}
+
+#nameInput{
+  padding:8px 12px;
+  border-radius:8px;
+  border:2px solid #ffe600;
+  background:#111;
+  color:#fff;
+  outline:none;
+  font-size:16px;
+}
+
+#nameBox button{
+  padding:8px 12px;
+  border:none;
+  border-radius:8px;
+  background:#ffe600;
+  color:#000;
+  font-weight:600;
+  cursor:pointer;
+  margin-left:10px;
+}
+
+/* Download button (hidden initially) */
+#downloadBtn{
+  display:none;
+  padding:8px 15px;
+  margin-top:20px;
+  border:none;
+  border-radius:8px;
+  background:#ffe600;
+  color:#000;
+  font-weight:600;
+  cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<!-- Flying objects container -->
+<div class="flyingContainer" id="flyingContainer"></div>
+
+<!-- NAME INPUT -->
+<div id="nameBox">
+  <input id="nameInput" placeholder="Enter Your Name">
+  <button onclick="showCard()">Submit</button>
+</div>
+
+<!-- MAIN AREA (hidden initially) -->
+<div id="wishArea" class="hidden">
+
+  <div id="cardArea">
+
+    <div class="banner" id="banner">
+      <div class="banner-title">HAPPY NEW YEAR</div>
+      <div class="banner-sub">2026</div>
+    </div>
+
+    <!-- Fixed circle -->
+    <div class="row" id="circleRow">
+      <div class="circle">
+        <img src="aa.jpeg" alt="Pritam">
+      </div>
+    </div>
+
+    <div id="userMessage"></div>
+    <div class="creator">— Created by Pritam Sharma</div>
+
+    <!-- Download button (shown last) -->
+    <button id="downloadBtn" onclick="downloadCard()">Download Greeting</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+function showCard(){
+  const name=document.getElementById("nameInput").value.trim();
+  if(name===""){
+    alert("Please enter your name!");
+    return;
+  }
+
+  // Hide name input
+  document.getElementById("nameBox").style.display="none";
+  document.getElementById("wishArea").classList.remove("hidden");
+
+  // Step 1: Show banner after small delay
+  const banner=document.getElementById("banner");
+  banner.classList.add("show");
+
+  // Step 2: Show circle after 1 second
+  const row=document.getElementById("circleRow");
+  setTimeout(()=>row.classList.add("show"),1000);
+
+  // Step 3: Show user message after 1.5s
+  const userMsg=document.getElementById("userMessage");
+  userMsg.innerHTML="🎉 Welcome " + name + "!<br>✨ Wish You a Happy New Year 2026 ✨";
+  setTimeout(()=>userMsg.classList.add("show"),1500);
+
+  // Step 4: Start flying objects after 2s
+  setTimeout(()=>createFlyingObjects(40),2000);
+
+  // Step 5: Show download button last (after 2.5s)
+  setTimeout(()=>document.getElementById("downloadBtn").style.display="inline-block",2500);
+}
+
+/* Download card */
+function downloadCard(){
+  const card=document.getElementById("cardArea");
+  html2canvas(card,{backgroundColor:null}).then(canvas=>{
+    const link=document.createElement("a");
+    link.download="NewYear-Greeting.png";
+    link.href=canvas.toDataURL();
+    link.click();
+  });
+}
+
+/* Generate floating objects */
+function createFlyingObjects(count){
+  const container=document.getElementById("flyingContainer");
+  const symbols=['🎈','🎉','💖','🎁','✨','💝','🥳','💛','❤️','🎊','🎀']; 
+  for(let i=0;i<count;i++){
+    const obj=document.createElement("div");
+    obj.className="flyingObj";
+    obj.innerText=symbols[Math.floor(Math.random()*symbols.length)];
+    obj.style.left=Math.random()*100+"vw";
+    obj.style.fontSize=(20+Math.random()*30)+"px";
+    obj.style.animationDuration=(3+Math.random()*5)+"s";
+    obj.style.transform=`rotate(${Math.random()*360}deg)`;
+    container.appendChild(obj);
+  }
+}
+</script>
+
+</body>
+</html>
